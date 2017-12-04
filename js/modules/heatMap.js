@@ -6,10 +6,12 @@ function heatMap(selection) {
     width = 400 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom,
     gridSize = Math.floor(width / 13),
-    legendElementWidth = gridSize*1.5,
-    buckets = 9,
-    colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
-    days = ["ARMA BLANCA","ARMA BLANCA/CORTOPUNZANTE","ARMA DE FUEGO","CONTUNDENTES","CORTANTES","ESCOPOLAMINA","JERINGA","PERRO","SIN EMPLEO DE ARMAS","NO REPORTADO"],
+    legendElementWidth = gridSize*1.85,
+    buckets = 7,
+    //colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+    //colors = ["#edf8fb","#bfd3e6", "#9ebcda", "#8c96c6", "#8c6bb1", "#88419d", "#6e016b"]
+    colors = ["#ffffcc","#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#0c2c84"]
+    days = ["ARMA BLANCA","ARMA DE FUEGO","CONTUNDENTES","CORTANTES","ESCOPOLAMINA","JERINGA","PERRO","SIN EMPLEO DE ARMAS","NO REPORTADO"],
     times = ["A PIE","BICI","C-BUS","C-MOTO","C-TAXI","C-VEH","P-BUS","P-METRO","P-MOTO","P-TAXI","P-VEH","VEHICULO","NO REPORTA"],
     datasets = [],
     onMouseOver = function () { },
@@ -48,7 +50,7 @@ function heatMap(selection) {
           .style("text-anchor", "end")
           .style("font-size", "10px")
           .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-          .attr("class", (d, i) => ((i >= 0 && i <= 10) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"));
+          .attr("class", (d, i) => ((i >= 0 && i <= 9) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"));
 
       const timeLabels = g.selectAll(".timeLabel")
         .data(times)
@@ -76,7 +78,7 @@ function heatMap(selection) {
 
       const heatmapChart = function(tsvFile) {
         const colorScale = d3.scaleQuantile()
-          .domain([0, buckets - 1, d3.max(data, (d) => d.value)])
+          .domain([0, (d3.max(data, (d) => d.value) / 13) , d3.max(data, (d) => d.value)])
           .range(colors);
 
         const cards = g.selectAll(".hour")
@@ -127,7 +129,11 @@ function heatMap(selection) {
           .text((d) => "≥ " + Math.round(d))
           .style("font-size", "10px")
           .attr("x", (d, i) => legendElementWidth * i)
-          .attr("y", height + gridSize);
+          .attr("y", height + gridSize)
+          //.attr("x", -250)
+          //.attr("y", (d, i) => ( legendElementWidth* i) +25 );
+          //.style("text-anchor", "right");
+          //.attr("transform", "rotate(-90)");
 
         legend.exit().remove();
       };
